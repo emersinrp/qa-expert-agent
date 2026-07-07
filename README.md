@@ -40,18 +40,69 @@ O `qa-expert` faz o **skill routing** — lê o contexto (`package.json`, `pubsp
   - Pact: `npm test` (consumer) · `npm run pact:verify` (provider)
 - **Relatório estruturado** — JUnit XML/JSON/HTML quando possível, nunca só console.
 
+## Estrutura do repo
+
+```
+qa-expert-agent/
+├── qa-expert.md            # o agente (frontmatter + skill routing + processo + padrões)
+├── skills/                 # as 10 skills que o agente despacha (bundle offline)
+│   ├── playwright/SKILL.md
+│   ├── cypress/SKILL.md
+│   ├── selenium/SKILL.md
+│   ├── tests-back-performance-k6/SKILL.md
+│   ├── tests-back-performance-locust/SKILL.md
+│   ├── jmeter/SKILL.md
+│   ├── a11y-axe/SKILL.md
+│   ├── pact-contract/SKILL.md
+│   ├── mobile-tests/SKILL.md
+│   └── browserstack/SKILL.md
+├── README.md
+└── _config.yml
+```
+
+> O bundle de skills torna o fork **autocontido**: clona, copia agente + skills, e o `qa-expert` já despacha sem depender de nada externo. Se você já tem alguma dessas skills instalada via opencode packages, pode omitir a correspondente — não vai conflitar.
+
 ## Como usar (instalação)
 
-1. Tenha o [opencode](https://opencode.ai/go?ref=N7RAC3TFM1) instalado.
-2. Copie o agente para a pasta de agentes do opencode:
+### Pré-requisitos
+
+- [opencode](https://opencode.ai/go?ref=N7RAC3TFM1) instalado
+- (Opcional, só pra executar os testes gerados) runtimes conforme a stack alvo: Node/k6/Python/JVM/Xcode/Flutter/Android SDK
+
+### Passo a passo
+
+1. Clone o repo:
+
+   ```bash
+   git clone https://github.com/emersinrp/qa-expert-agent.git
+   cd qa-expert-agent
+   ```
+
+2. Copie o **agente** para a pasta de agentes do opencode:
 
    ```bash
    mkdir -p ~/.config/opencode/agents
-   curl -fsSL https://raw.githubusercontent.com/emersinrp/qa-expert-agent/master/qa-expert.md \
-     -o ~/.config/opencode/agents/qa-expert.md
+   cp qa-expert.md ~/.config/opencode/agents/qa-expert.md
    ```
 
-3. Pronto. Na próxima sessão do opencode, qualquer tarefa que envolva testes (Playwright, Cypress, k6, Pact, a11y, mobile E2E, BrowserStack, etc.) despacha o `qa-expert` automaticamente.
+3. Copie as **skills** (as 10) para a pasta de skills do opencode:
+
+   ```bash
+   mkdir -p ~/.config/opencode/skills
+   cp -r skills/* ~/.config/opencode/skills/
+   ```
+
+4. Pronto. Na próxima sessão do opencode, qualquer tarefa que envolva testes (Playwright, Cypress, k6, Pact, a11y, mobile E2E, BrowserStack, etc.) despacha o `qa-expert` automaticamente, e ele carrega a skill correspondente do bundle.
+
+### Instalação rápida (one-liner, só agente)
+
+Se você já tem as skills instaladas por outra via e quer só o agente:
+
+```bash
+mkdir -p ~/.config/opencode/agents && \
+curl -fsSL https://raw.githubusercontent.com/emersinrp/qa-expert-agent/master/qa-expert.md \
+  -o ~/.config/opencode/agents/qa-expert.md
+```
 
 ### Exemplos de dispatch
 
@@ -70,15 +121,17 @@ O `qa-expert` faz o **skill routing** — lê o contexto (`package.json`, `pubsp
 - **Idioma das respostas:** PT-BR
 - **Cor:** `#ef4444` (vermelho QA no opencode)
 
-## Estrutura do arquivo
+## Estrutura do agente
 
 `qa-expert.md` segue o formato de agente do opencode:
 
 - **frontmatter** — descrição, exemplos de dispatch, `mode`, `model`, `color`, permissões
-- **skill routing** — tabela verba→skill acionada antes de agir
+- **skill routing** — tabela verba→skill acionada antes de agir (10 skills no bundle)
 - **processo** — inspect → apply skill → pirâmide → verify by running → flakiness hygiene → report
 - **padrões de qualidade** — pirâmide, seletores, determinismo, CI gate, segurança, reporting
 - **formato de output** — resumo + arquivos + verificação cru + próximos passos
+
+Cada `skills/<name>/SKILL.md` é uma skill reutilizável no formato opencode — checklist específico da ferramenta, anti-patterns, comandos de verificação. Podem ser invocadas também diretamente por outros agentes, não só pelo `qa-expert`.
 
 ## Fork / contribuição
 
