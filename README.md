@@ -86,8 +86,10 @@ Fork à vontade. Sugestões de skills novas, ajustes de roteamento ou exemplos d
 
 ## Autor
 
-**Emerson Rodrigues** — Specialist QA Engineer / Tech Lead.
-*Qualidade é a base. Arquitetura é o teto.*
+**Emerson Rodrigues** — Arquiteto de Soluções e IA (GenAI, sistemas agênticos, Spec-Driven Development).
+14+ anos em tecnologia, hoje na fronteira entre arquitetura de software e IA Generativa — conduz o *Spec Kit* na MBRF (framework SDD com 19 agentes de IA, 49 skills, integrações MCP com Figma, Azure DevOps, GitHub, Atlassian e Rovo). Trajetória de base em QA: Specialist QA Engineer e Senior QA Engineer em BRF/Wunderman/Luizalabs, instrutor de automação na QA Academy.
+
+*Qualidade é a base. Arquitetura é o teto. IA é a alavanca entre as duas.*
 
 ---
 
