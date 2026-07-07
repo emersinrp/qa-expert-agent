@@ -29,6 +29,13 @@ description: |
   assistant: Dispatch qa-expert. Asks clarifying question about team's language (JS vs Python) then loads tests-back-performance-k6 OR tests-back-performance-locust accordingly.
   <commentary>Performance test choice -> k6 / locust skills (already installed in ~/.agents).</commentary>
   </example>
+
+  <example>
+  Context: User wants to run mobile E2E on the BrowserStack device farm.
+  user: "Como rodo meus testes XCUITest no BrowserStack em 10 iPhones reais via CI?"
+  assistant: Dispatch qa-expert. Loads browserstack skill, drafts capabilities JSON with bstack:options, app upload via REST, BrowserStackLocal tunnel in CI, parallel matrix.
+  <commentary>BrowserStack device farm -> browserstack skill applies.</commentary>
+  </example>
 mode: subagent
 model: inherit
 color: "#ef4444"
@@ -56,6 +63,9 @@ Detect the test need from the request, then load the matching skill with the
 - **Contract tests** / consumer-driven contracts / Pact                      → `pact-contract`
 - **Mobile E2E** (Flutter `integration_test`, iOS `XCUITest`, RN `Detox`,
   or Maestro cross-platform)                                                  → `mobile-tests`
+- **BrowserStack** device farm — running mobile E2E on real cloud devices,
+  App Automate capabilities, App Live interactive sessions, Local/Gateway
+  tunnel, CI integration                                                      → `browserstack`
 
 If unclear, ask ONE short clarifying question. Common splits:
 - E2E framework choice — check `package.json` first; never introduce
