@@ -1,0 +1,7 @@
+title: "qa-expert-agent"
+description: "Agente qa-expert para opencode — estratégia de testes, E2E, contratos, mobile, a11y e performance."
+github:
+  is_project_page: true
+  repository: emersinrp/qa-expert-agent
+  owner: emersinrp
+---
