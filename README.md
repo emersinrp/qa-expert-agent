@@ -1,6 +1,6 @@
 # qa-expert-agent
 
-Agente **`qa-expert`** para o [opencode](https://opencode.ai) — um especialista em Quality Engineering que cobre estratégia de testes, E2E, contratos, mobile, acessibilidade, performance **e execução em device farms na nuvem**.
+Agente **`qa-expert`** de Quality Engineering — cobre estratégia de testes, E2E, contratos, mobile, acessibilidade, performance **e execução em device farms na nuvem**. Nasceu no [opencode](https://opencode.ai) e roda também em **Claude Code, Cursor, GitHub Copilot e Codex**: o corpo do agente e as 10 skills são portáveis — muda só o frontmatter e a pasta de instalação.
 
 > Arquitetura é o teto. Qualidade é a base. Sem base, o teto cai.
 
@@ -67,51 +67,104 @@ qa-expert-agent/
 
 ### Pré-requisitos
 
-- [opencode](https://opencode.ai/go?ref=N7RAC3TFM1) instalado
+- Uma destas ferramentas: [opencode](https://opencode.ai/go?ref=N7RAC3TFM1), Claude Code, Cursor, GitHub Copilot ou Codex
 - (Opcional, só pra executar os testes gerados) runtimes conforme a stack alvo: Node/k6/Python/JVM/Xcode/Flutter/Android SDK
 
-### Instalação rápida (recomendado)
+O agente e as skills são **uma fonte só** pra qualquer ferramenta — muda só **onde** salvar o agente e **qual frontmatter** ele usa; o corpo (skill routing + processo + padrões) é idêntico. As skills (`skills/*/SKILL.md`) são portáveis: em **opencode** e **Claude Code** viram skills nativas; em **Cursor**, **Copilot** e **Codex** você mantém a pasta `skills/` no repo e o agente lê `skills/<nome>/SKILL.md` sob demanda.
+
+> Nos snippets abaixo, **«corpo do agente»** = tudo em [`qa-expert.md`](./qa-expert.md) **abaixo** do frontmatter (da linha `You are the **qa-expert**...` até o fim). Só o cabeçalho YAML muda entre ferramentas.
+
+### opencode (casa) — automático
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/emersinrp/qa-expert-agent/master/install.sh | bash
 ```
 
-Instala o agente `qa-expert` e as 10 skills em `~/.config/opencode/` (com backup de qualquer versão anterior). Na próxima sessão do opencode, qualquer tarefa que envolva testes despacha o `qa-expert` automaticamente. Prefere revisar antes de rodar? [Leia o `install.sh`](./install.sh) — ele só baixa o repo e copia os arquivos.
+Instala o agente `qa-expert` e as 10 skills em `~/.config/opencode/` (com backup de qualquer versão anterior). Na próxima sessão, qualquer tarefa de teste despacha o `qa-expert` automaticamente. Prefere revisar antes? [Leia o `install.sh`](./install.sh) — ele só baixa o repo e copia os arquivos.
 
-### Passo a passo (manual)
-
-1. Clone o repo:
-
-   ```bash
-   git clone https://github.com/emersinrp/qa-expert-agent.git
-   cd qa-expert-agent
-   ```
-
-2. Copie o **agente** para a pasta de agentes do opencode:
-
-   ```bash
-   mkdir -p ~/.config/opencode/agents
-   cp qa-expert.md ~/.config/opencode/agents/qa-expert.md
-   ```
-
-3. Copie as **skills** (as 10) para a pasta de skills do opencode:
-
-   ```bash
-   mkdir -p ~/.config/opencode/skills
-   cp -r skills/* ~/.config/opencode/skills/
-   ```
-
-4. Pronto. Na próxima sessão do opencode, qualquer tarefa que envolva testes (Playwright, Cypress, k6, Pact, a11y, mobile E2E, BrowserStack, etc.) despacha o `qa-expert` automaticamente, e ele carrega a skill correspondente do bundle.
-
-### Instalação rápida (one-liner, só agente)
-
-Se você já tem as skills instaladas por outra via e quer só o agente:
+Manual:
 
 ```bash
-mkdir -p ~/.config/opencode/agents && \
-curl -fsSL https://raw.githubusercontent.com/emersinrp/qa-expert-agent/master/qa-expert.md \
-  -o ~/.config/opencode/agents/qa-expert.md
+git clone https://github.com/emersinrp/qa-expert-agent.git && cd qa-expert-agent
+mkdir -p ~/.config/opencode/agents ~/.config/opencode/skills
+cp qa-expert.md ~/.config/opencode/agents/qa-expert.md
+cp -r skills/* ~/.config/opencode/skills/
 ```
+
+### Claude Code — automático
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/emersinrp/qa-expert-agent/master/install.sh | bash -s -- claude
+```
+
+Instala em `~/.claude/` (agente + as mesmas 10 skills — o formato `SKILL.md` é idêntico). O instalador **gera o frontmatter do Claude** por cima do corpo canônico, porque o `mode`/`color`/`permission` do opencode não se aplicam aqui.
+
+Manual — salve o agente em `~/.claude/agents/qa-expert.md` com este cabeçalho + o «corpo do agente», e copie as skills:
+
+```markdown
+---
+name: qa-expert
+description: >-
+  Quality Engineering specialist — test strategy, E2E, contract, mobile,
+  accessibility, and performance testing. Use for writing/maintaining tests,
+  choosing a framework, debugging a flaky test, designing a test pyramid, or
+  wiring tests into CI. Covers playwright, cypress, selenium, k6, locust,
+  jmeter, axe-core, pact, mobile E2E (xcuitest/detox/flutter/maestro), and
+  browserstack.
+model: inherit
+---
+
+«corpo do agente»
+```
+
+```bash
+mkdir -p ~/.claude/skills && cp -r skills/* ~/.claude/skills/
+```
+
+### Cursor
+
+Cursor usa **rules** (`.cursor/rules/*.mdc`), não skills. Salve o «corpo do agente» como uma rule *Agent Requested* e mantenha a pasta `skills/` no repo — o agente lê `skills/<nome>/SKILL.md` quando a tarefa pede.
+
+`.cursor/rules/qa-expert.mdc`:
+
+```markdown
+---
+description: Quality Engineering — E2E, contract, mobile, a11y e performance. Escolhe framework, escreve/depura testes, integra no CI. Roteia para skills/<nome>/SKILL.md.
+alwaysApply: false
+---
+
+«corpo do agente»
+```
+
+### GitHub Copilot
+
+Salve o «corpo do agente» como arquivo de instruções e mantenha `skills/` no repo.
+
+`.github/instructions/qa-expert.instructions.md`:
+
+```markdown
+---
+applyTo: "**"
+---
+
+«corpo do agente»
+```
+
+Alternativa: cole o «corpo do agente» em `.github/copilot-instructions.md` (vale pro repo inteiro, sem frontmatter).
+
+### Codex
+
+Codex lê `AGENTS.md` — markdown puro, **sem frontmatter** — na raiz do projeto (ou `~/.codex/AGENTS.md` global). Cole o «corpo do agente» no `AGENTS.md` e mantenha `skills/` no repo.
+
+### Resumo
+
+| Ferramenta | Arquivo do agente | Frontmatter | Skills |
+|---|---|---|---|
+| **opencode** | `~/.config/opencode/agents/qa-expert.md` | `mode`/`model`/`color`/`permission` (como está) | `~/.config/opencode/skills/*` (nativas) |
+| **Claude Code** | `~/.claude/agents/qa-expert.md` | `name` + `description` + `model` | `~/.claude/skills/*` (mesmo `SKILL.md`) |
+| **Cursor** | `.cursor/rules/qa-expert.mdc` | `description` + `alwaysApply: false` | `skills/` no repo (sob demanda) |
+| **Copilot** | `.github/instructions/qa-expert.instructions.md` | `applyTo: "**"` | `skills/` no repo (sob demanda) |
+| **Codex** | `AGENTS.md` (raiz ou `~/.codex/`) | — (markdown puro) | `skills/` no repo (sob demanda) |
 
 ### Exemplos de dispatch
 
@@ -125,10 +178,10 @@ curl -fsSL https://raw.githubusercontent.com/emersinrp/qa-expert-agent/master/qa
 
 ## Stack do agente
 
-- **Runner:** opencode (subagent `mode: subagent`, `permission: edit/bash ask`)
-- **Modelo:** GLM 5.2 (`glm-5.2`)
+- **Ferramentas:** opencode (casa), Claude Code, Cursor, GitHub Copilot, Codex
+- **Formato canônico:** subagent do opencode (`mode: subagent`, `permission: edit/bash ask`, `color: #ef4444`) — adaptado por ferramenta na instalação
+- **Modelo:** `model: inherit` — usa o modelo da sua sessão. Na parceria [opencode](https://opencode.ai/go?ref=N7RAC3TFM1) rodo com **GLM 5.2**.
 - **Idioma das respostas:** PT-BR
-- **Cor:** `#ef4444` (vermelho QA no opencode)
 
 ## Estrutura do agente
 

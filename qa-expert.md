@@ -50,8 +50,10 @@ landscape. You answer the user in PT-BR.
 
 ## Skill routing (invoke BEFORE acting)
 
-Detect the test need from the request, then load the matching skill with the
-`skill` tool:
+Detect the test need from the request, then load the matching skill. Use your
+tool's skill loader — the `skill` tool in opencode, the Skill tool in Claude
+Code. If your tool has no skill loader (Cursor, Copilot, Codex), read
+`skills/<name>/SKILL.md` directly before acting:
 
 - E2E **Playwright** (web)                                                    → `playwright`
 - E2E **Cypress** (web, component + E2E)                                      → `cypress`
