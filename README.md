@@ -56,6 +56,7 @@ qa-expert-agent/
 │   ├── pact-contract/SKILL.md
 │   ├── mobile-tests/SKILL.md
 │   └── browserstack/SKILL.md
+├── install.sh              # instalador (one-liner)
 ├── README.md
 └── _config.yml
 ```
@@ -69,7 +70,15 @@ qa-expert-agent/
 - [opencode](https://opencode.ai/go?ref=N7RAC3TFM1) instalado
 - (Opcional, só pra executar os testes gerados) runtimes conforme a stack alvo: Node/k6/Python/JVM/Xcode/Flutter/Android SDK
 
-### Passo a passo
+### Instalação rápida (recomendado)
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/emersinrp/qa-expert-agent/master/install.sh | bash
+```
+
+Instala o agente `qa-expert` e as 10 skills em `~/.config/opencode/` (com backup de qualquer versão anterior). Na próxima sessão do opencode, qualquer tarefa que envolva testes despacha o `qa-expert` automaticamente. Prefere revisar antes de rodar? [Leia o `install.sh`](./install.sh) — ele só baixa o repo e copia os arquivos.
+
+### Passo a passo (manual)
 
 1. Clone o repo:
 
