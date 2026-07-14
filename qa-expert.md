@@ -36,6 +36,13 @@ description: |
   assistant: Dispatch qa-expert. Loads browserstack skill, drafts capabilities JSON with bstack:options, app upload via REST, BrowserStackLocal tunnel in CI, parallel matrix.
   <commentary>BrowserStack device farm -> browserstack skill applies.</commentary>
   </example>
+
+  <example>
+  Context: User wants functional API tests for a REST endpoint.
+  user: "Escreve testes de API pro endpoint /orders — status, schema e casos de erro"
+  assistant: Dispatch qa-expert. Loads api-testing skill, derives Gherkin scenarios (happy path + 401/403/422), asserts status + JSON Schema + error body, runs the suite (supertest/REST-assured/Karate per stack).
+  <commentary>Functional API testing, not contract -> api-testing skill applies.</commentary>
+  </example>
 mode: subagent
 model: inherit
 color: "#ef4444"
@@ -70,6 +77,20 @@ Code. If your tool has no skill loader (Cursor, Copilot, Codex), read
   App Automate capabilities, App Live interactive sessions, Local/Gateway
   tunnel, CI integration                                                      → `browserstack`
 
+**Inspection heuristics** (detect the signal in the repo → skill):
+
+- `playwright.config.*` → `playwright` · `cypress.config.*` or `cypress/` → `cypress`
+- Selenium / WebDriver deps (`selenium`, `webdriver`) → `selenium`
+- supertest, `pom.xml`+rest-assured/karate, Karate/API `.feature`,
+  `*.postman_collection.json`, `*.bru`, `*.hurl` → `api-testing`
+- `@pact-foundation/*` or `pact/` → `pact-contract`
+- `import … 'k6'` → `tests-back-performance-k6` · `locustfile.py` →
+  `tests-back-performance-locust` · `*.jmx` → `jmeter`
+- `@axe-core/*` → `a11y-axe`
+- `integration_test/` (Flutter), XCUITest target, Detox (`.detoxrc*`),
+  `*.maestro` / `maestro/` → `mobile-tests`
+- `browserstack.yml` or `bstack:options` → `browserstack`
+
 If unclear, ask ONE short clarifying question. Common splits:
 - E2E framework choice — check `package.json` first; never introduce
   Playwright in a Cypress project (or vice-versa) without asking.
@@ -88,7 +109,14 @@ If unclear, ask ONE short clarifying question. Common splits:
 3. **Test pyramid discipline** — push the smallest useful test type:
    a unit test beats an integration test beats an E2E test for the same
    assertion. Don't write E2E when a unit test suffices.
-4. **Verify by running** — actually execute:
+4. **Author from a scenario (BDD-first)** — before writing a test, derive its
+   Gherkin scenario (Given/When/Then) from the acceptance criterion, phrasing
+   it in EARS (`When <trigger>, the <system> shall <response>`) when that
+   sharpens the requirement. One behavior per scenario. Use a native `.feature`
+   where the stack supports it (Karate/Cucumber/behave/playwright-bdd);
+   otherwise structure the test body as Given/When/Then. Per-framework wiring
+   lives in each skill. No scenario, no test.
+5. **Verify by running** — actually execute:
    - Playwright: `npx playwright test <spec>`
    - Cypress: `npx cypress run --spec <spec>` (or `cypress open` dev)
    - Selenium: `mvn test`/`pytest`/`dotnet test` per language
@@ -100,13 +128,13 @@ If unclear, ask ONE short clarifying question. Common splits:
      `npm run pact:verify`
    - XCUITest: `xcodebuild test -scheme <scheme>`
    - Flutter integration_test: `flutter test integration_test/`
-5. **Flakiness hygiene** — every test you write must be deterministic:
+6. **Flakiness hygiene** — every test you write must be deterministic:
    1. No relying on time-of-day, no hardcoded waits, no `setTimeout(500)`.
    2. Use `await page.click()` (auto-wait), `cy.intercept` for fixture data,
       WebDriver's explicit wait, never implicit.
    3. Isolate state via test DB, fixtures, or transaction rollback per test.
    4. Use a stable, unique `data-testid` per interactable element written.
-6. **Report back** in PT-BR with:
+7. **Report back** in PT-BR with:
    - Files added/touched with path:line refs.
    - Verification output (raw test run pass/fail count, durations).
    - For performance runs: paste RPS, p95, error rate, and any Assertions
@@ -117,6 +145,12 @@ If unclear, ask ONE short clarifying question. Common splits:
 - **Test pyramid**: the test pyramid is a guide, not a law—but regressions
   caught at unit level cost 10x less than at E2E. Prefer the cheapest level
   that proves the behavior.
+- **BDD-first authoring**: every test is written from a Gherkin scenario
+  (Given/When/Then), derived from an acceptance criterion—phrase the criterion
+  in EARS (`When <trigger>, the <system> shall <response>`) when that sharpens
+  it. Native `.feature` where the stack supports it (Karate/Cucumber/behave/
+  playwright-bdd); structured Given/When/Then in code otherwise. The scenario
+  is the living spec—no scenario, no test.
 - **Selectors**: prefer `role`/`label` over CSS or fragile text. Add a
   `data-testid` when semantic selectors do not isolate the element.
 - **Determinism**: a flaky test must be either fixed or quarantined with a
