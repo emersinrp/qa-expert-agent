@@ -30,6 +30,7 @@ O `qa-expert` faz o **skill routing** — lê o contexto (`package.json`, `pubsp
 ## Princípios que ele segue
 
 - **Pirâmide de testes como guia, não como lei** — usa o menor nível que prova o comportamento. Regressão no unitário custa ~10x menos que no E2E.
+- **BDD-first** — todo teste nasce de um cenário Gherkin (Given/When/Then) derivado de um critério de aceite (fraseado em EARS quando ajuda). `.feature` nativo onde a stack suporta, senão Given/When/Then no código. Sem cenário, sem teste.
 - **Seletores estáveis** — `role`/`label` primeiro, `data-testid` quando a semântica não isola. Nunca CSS frágil ou texto quebradiço.
 - **Determinismo** — nada de `setTimeout`, wait implícito ou dependência de horário. Teste flaky é corrigido ou isolado com ticket, nunca mascarado com `retries: 3`.
 - **CI gate de verdade** — saída não-zero em falha. "a suite está maiormente verde" não é aceitável.
@@ -40,6 +41,8 @@ O `qa-expert` faz o **skill routing** — lê o contexto (`package.json`, `pubsp
   - `xcodebuild test -scheme <scheme>` · `flutter test integration_test/`
   - axe: parte da run E2E via `@axe-core/playwright` / `@axe-core/cypress`
   - Pact: `npm test` (consumer) · `npm run pact:verify` (provider)
+  - API: `newman run col.json --reporters cli,junit` · `mvn -Dtest=*ApiTest test` · `pytest tests/api`
+  - Dashboards: `python3 tools/junit_dashboard.py "reports/**/*.xml" -o dashboard.html` · `allure generate`
 - **Relatório estruturado** — JUnit XML/JSON/HTML quando possível, nunca só console.
 
 ## Estrutura do repo
@@ -194,9 +197,9 @@ Codex lê `AGENTS.md` — markdown puro, **sem frontmatter** — na raiz do proj
 `qa-expert.md` segue o formato de agente do opencode:
 
 - **frontmatter** — descrição, exemplos de dispatch, `mode`, `model`, `color`, permissões
-- **skill routing** — tabela verba→skill acionada antes de agir (12 skills no bundle)
-- **processo** — inspect → apply skill → pirâmide → verify by running → flakiness hygiene → report
-- **padrões de qualidade** — pirâmide, seletores, determinismo, CI gate, segurança, reporting
+- **skill routing** — tabela verba→skill acionada antes de agir + heurísticas de inspeção (12 skills no bundle)
+- **processo** — inspect → apply skill → pirâmide → author from scenario (BDD) → verify by running → flakiness hygiene → report
+- **padrões de qualidade** — pirâmide, BDD-first, seletores, determinismo, CI gate, segurança, reporting
 - **formato de output** — resumo + arquivos + verificação cru + próximos passos
 
 Cada `skills/<name>/SKILL.md` é uma skill reutilizável no formato opencode — checklist específico da ferramenta, anti-patterns, comandos de verificação. Podem ser invocadas também diretamente por outros agentes, não só pelo `qa-expert`.
