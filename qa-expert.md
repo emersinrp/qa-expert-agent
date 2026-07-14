@@ -62,6 +62,7 @@ Code. If your tool has no skill loader (Cursor, Copilot, Codex), read
 - **Performance** load test (HTTP) — if Python-native or swarm-distributed  → `tests-back-performance-locust`
 - **Performance** load test with **JMeter** (legacy, GUI-built)              → `jmeter`
 - **Accessibility** WCAG / axe-core                                          → `a11y-axe`
+- **API testing** (functional REST/GraphQL — status/schema/auth/errors)      → `api-testing`
 - **Contract tests** / consumer-driven contracts / Pact                      → `pact-contract`
 - **Mobile E2E** (Flutter `integration_test`, iOS `XCUITest`, RN `Detox`,
   or Maestro cross-platform)                                                  → `mobile-tests`
@@ -73,6 +74,8 @@ If unclear, ask ONE short clarifying question. Common splits:
 - E2E framework choice — check `package.json` first; never introduce
   Playwright in a Cypress project (or vice-versa) without asking.
 - Performance tool — k6 (TS/JS) vs Locust (Py) vs JMeter (legacy Java).
+- Contract vs functional API — a consumer-driven contract is `pact-contract`;
+  asserting an endpoint's own behavior (status/schema/errors) is `api-testing`.
 
 ## Process
 

@@ -1,6 +1,6 @@
 # qa-expert-agent
 
-Agente **`qa-expert`** de Quality Engineering — cobre estratégia de testes, E2E, contratos, mobile, acessibilidade, performance **e execução em device farms na nuvem**. Nasceu no [opencode](https://opencode.ai) e roda também em **Claude Code, Cursor, GitHub Copilot e Codex**: o corpo do agente e as 10 skills são portáveis — muda só o frontmatter e a pasta de instalação.
+Agente **`qa-expert`** de Quality Engineering — cobre estratégia de testes, E2E, contratos, mobile, acessibilidade, performance **e execução em device farms na nuvem**. Nasceu no [opencode](https://opencode.ai) e roda também em **Claude Code, Cursor, GitHub Copilot e Codex**: o corpo do agente e as 11 skills são portáveis — muda só o frontmatter e a pasta de instalação.
 
 > Arquitetura é o teto. Qualidade é a base. Sem base, o teto cai.
 
@@ -21,6 +21,7 @@ O `qa-expert` faz o **skill routing** — lê o contexto (`package.json`, `pubsp
 | Performance HTTP (Python / distribuído) | Locust | `tests-back-performance-locust` |
 | Performance GUI (legado Java) | JMeter | `jmeter` |
 | Acessibilidade / WCAG 2.1 AA | axe-core | `a11y-axe` |
+| API testing funcional (REST/GraphQL) | supertest, REST-assured, Karate, pytest, Postman | `api-testing` |
 | Contract tests / consumer-driven | Pact | `pact-contract` |
 | Mobile E2E | XCUITest (iOS), Detox (RN), `integration_test` (Flutter), Maestro | `mobile-tests` |
 | **Device farm na nuvem** | **BrowserStack App Automate / App Live / Local tunnel** | **`browserstack`** |
@@ -45,7 +46,7 @@ O `qa-expert` faz o **skill routing** — lê o contexto (`package.json`, `pubsp
 ```
 qa-expert-agent/
 ├── qa-expert.md            # o agente (frontmatter + skill routing + processo + padrões)
-├── skills/                 # as 10 skills que o agente despacha (bundle offline)
+├── skills/                 # as 11 skills que o agente despacha (bundle offline)
 │   ├── playwright/SKILL.md
 │   ├── cypress/SKILL.md
 │   ├── selenium/SKILL.md
@@ -53,6 +54,7 @@ qa-expert-agent/
 │   ├── tests-back-performance-locust/SKILL.md
 │   ├── jmeter/SKILL.md
 │   ├── a11y-axe/SKILL.md
+│   ├── api-testing/SKILL.md
 │   ├── pact-contract/SKILL.md
 │   ├── mobile-tests/SKILL.md
 │   └── browserstack/SKILL.md
@@ -80,7 +82,7 @@ O agente e as skills são **uma fonte só** pra qualquer ferramenta — muda só
 curl -fsSL https://raw.githubusercontent.com/emersinrp/qa-expert-agent/master/install.sh | bash
 ```
 
-Instala o agente `qa-expert` e as 10 skills em `~/.config/opencode/` (com backup de qualquer versão anterior). Na próxima sessão, qualquer tarefa de teste despacha o `qa-expert` automaticamente. Prefere revisar antes? [Leia o `install.sh`](./install.sh) — ele só baixa o repo e copia os arquivos.
+Instala o agente `qa-expert` e as 11 skills em `~/.config/opencode/` (com backup de qualquer versão anterior). Na próxima sessão, qualquer tarefa de teste despacha o `qa-expert` automaticamente. Prefere revisar antes? [Leia o `install.sh`](./install.sh) — ele só baixa o repo e copia os arquivos.
 
 Manual:
 
@@ -97,7 +99,7 @@ cp -r skills/* ~/.config/opencode/skills/
 curl -fsSL https://raw.githubusercontent.com/emersinrp/qa-expert-agent/master/install.sh | bash -s -- claude
 ```
 
-Instala em `~/.claude/` (agente + as mesmas 10 skills — o formato `SKILL.md` é idêntico). O instalador **gera o frontmatter do Claude** por cima do corpo canônico, porque o `mode`/`color`/`permission` do opencode não se aplicam aqui.
+Instala em `~/.claude/` (agente + as mesmas 11 skills — o formato `SKILL.md` é idêntico). O instalador **gera o frontmatter do Claude** por cima do corpo canônico, porque o `mode`/`color`/`permission` do opencode não se aplicam aqui.
 
 Manual — salve o agente em `~/.claude/agents/qa-expert.md` com este cabeçalho + o «corpo do agente», e copie as skills:
 
@@ -173,6 +175,7 @@ Codex lê `AGENTS.md` — markdown puro, **sem frontmatter** — na raiz do proj
 | "Escreve um teste E2E de fluxo de login usando Playwright" | `playwright` |
 | "Quero bloquear PRs que quebram WCAG 2.1 AA" | `a11y-axe` |
 | "Como adiciono contract tests entre service-orders e service-payments?" | `pact-contract` |
+| "Escreve testes de API do endpoint /orders — status, schema e casos de erro" | `api-testing` |
 | "Preciso fazer load test da API. k6 ou Locust?" | `tests-back-performance-k6` / `locust` |
 | "Como rodo meus testes XCUITest no BrowserStack em 10 iPhones reais via CI?" | `browserstack` |
 
@@ -188,7 +191,7 @@ Codex lê `AGENTS.md` — markdown puro, **sem frontmatter** — na raiz do proj
 `qa-expert.md` segue o formato de agente do opencode:
 
 - **frontmatter** — descrição, exemplos de dispatch, `mode`, `model`, `color`, permissões
-- **skill routing** — tabela verba→skill acionada antes de agir (10 skills no bundle)
+- **skill routing** — tabela verba→skill acionada antes de agir (11 skills no bundle)
 - **processo** — inspect → apply skill → pirâmide → verify by running → flakiness hygiene → report
 - **padrões de qualidade** — pirâmide, seletores, determinismo, CI gate, segurança, reporting
 - **formato de output** — resumo + arquivos + verificação cru + próximos passos

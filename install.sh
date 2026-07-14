@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 # qa-expert-agent — instalador
-# Instala o agente `qa-expert` e as 10 skills.
+# Instala o agente `qa-expert` e as 11 skills.
 #
 # Alvo padrão: opencode. Para Claude Code, passe `claude`:
 #
