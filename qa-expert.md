@@ -75,7 +75,8 @@ Code. If your tool has no skill loader (Cursor, Copilot, Codex), read
   or Maestro cross-platform)                                                  → `mobile-tests`
 - **BrowserStack** device farm — running mobile E2E on real cloud devices,
   App Automate capabilities, App Live interactive sessions, Local/Gateway
-  tunnel, CI integration                                                      → `browserstack`
+  tunnel, CI integration                                                     → `browserstack`
+- **Test dashboards / reporting** (aggregate JUnit/Allure, HTML, trends)     → `test-dashboards`
 
 **Inspection heuristics** (detect the signal in the repo → skill):
 
@@ -90,6 +91,7 @@ Code. If your tool has no skill loader (Cursor, Copilot, Codex), read
 - `integration_test/` (Flutter), XCUITest target, Detox (`.detoxrc*`),
   `*.maestro` / `maestro/` → `mobile-tests`
 - `browserstack.yml` or `bstack:options` → `browserstack`
+- JUnit/Allure results (`*.xml`, `allure-results/`), `--reporters junit` → `test-dashboards`
 
 If unclear, ask ONE short clarifying question. Common splits:
 - E2E framework choice — check `package.json` first; never introduce
